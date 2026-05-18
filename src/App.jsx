@@ -1,14 +1,31 @@
-import { useState } from 'react'
-import './App.css'
+import React, { useEffect } from 'react';
+import { AppProvider } from './context/AppContext';
+import Header from './components/Header/Header';
+import Main from './components/Main/Main';
+import { useMoviesAPI } from './hooks/useMoviesAPI';
+import './App.css';
 
-function App() {
-  const [count, setCount] = useState(0)
+const AppContent = () => {
+  const { loadGenres } = useMoviesAPI();
+
+  useEffect(() => {
+    loadGenres();
+  }, []);
 
   return (
-    <>
+    <div className="app">
+      <Header />
+      <Main />
+    </div>
+  );
+};
 
-    </>
-  )
+function App() {
+  return (
+    <AppProvider>
+      <AppContent />
+    </AppProvider>
+  );
 }
 
-export default App
+export default App;
