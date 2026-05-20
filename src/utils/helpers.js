@@ -143,7 +143,8 @@ export const fetchTopRatedMovies = async () => {
             `${BASE_URL}/movie/top_rated?api_key=${API_KEY}&language=it-IT&page=1`
         );
         const data = await response.json();
-        return data.results.map(item => ({ ...item, media_type: 'movie' }));
+        console.log('fetchTopRatedMovies - risultati:', data.results?.length);
+        return data.results?.map(item => ({ ...item, media_type: 'movie' })) || [];
     } catch (error) {
         console.error('Error fetching top rated movies:', error);
         return [];
@@ -157,7 +158,8 @@ export const fetchTopRatedTV = async () => {
             `${BASE_URL}/tv/top_rated?api_key=${API_KEY}&language=it-IT&page=1`
         );
         const data = await response.json();
-        return data.results.map(item => ({ ...item, media_type: 'tv' }));
+        console.log('fetchTopRatedTV - risultati:', data.results?.length);
+        return data.results?.map(item => ({ ...item, media_type: 'tv' })) || [];
     } catch (error) {
         console.error('Error fetching top rated TV:', error);
         return [];
@@ -171,7 +173,8 @@ export const fetchPopularMovies = async () => {
             `${BASE_URL}/movie/popular?api_key=${API_KEY}&language=it-IT&page=1`
         );
         const data = await response.json();
-        return data.results.map(item => ({ ...item, media_type: 'movie' }));
+        console.log('fetchPopularMovies - risultati:', data.results?.length);
+        return data.results?.map(item => ({ ...item, media_type: 'movie' })) || [];
     } catch (error) {
         console.error('Error fetching popular movies:', error);
         return [];
@@ -185,7 +188,8 @@ export const fetchPopularTV = async () => {
             `${BASE_URL}/tv/popular?api_key=${API_KEY}&language=it-IT&page=1`
         );
         const data = await response.json();
-        return data.results.map(item => ({ ...item, media_type: 'tv' }));
+        console.log('fetchPopularTV - risultati:', data.results?.length);
+        return data.results?.map(item => ({ ...item, media_type: 'tv' })) || [];
     } catch (error) {
         console.error('Error fetching popular TV:', error);
         return [];
@@ -199,12 +203,13 @@ export const fetchTrendingToday = async () => {
             `${BASE_URL}/trending/all/day?api_key=${API_KEY}&language=it-IT`
         );
         const data = await response.json();
-        return data.results.map(item => ({
+        console.log('fetchTrendingToday - risultati:', data.results?.length);
+        return data.results?.map(item => ({
             ...item,
             media_type: item.media_type || (item.title ? 'movie' : 'tv')
-        }));
+        })) || [];
     } catch (error) {
-        console.error('Error fetching trending:', error);
+        console.error('Error fetching trending today:', error);
         return [];
     }
 };
@@ -216,10 +221,11 @@ export const fetchTrendingThisWeek = async () => {
             `${BASE_URL}/trending/all/week?api_key=${API_KEY}&language=it-IT`
         );
         const data = await response.json();
-        return data.results.map(item => ({
+        console.log('fetchTrendingThisWeek - risultati:', data.results?.length);
+        return data.results?.map(item => ({
             ...item,
             media_type: item.media_type || (item.title ? 'movie' : 'tv')
-        }));
+        })) || [];
     } catch (error) {
         console.error('Error fetching trending week:', error);
         return [];

@@ -1,13 +1,5 @@
 import { useState, useEffect } from 'react';
-import {
-    fetchTopRatedMovies,
-    fetchTopRatedTV,
-    fetchPopularMovies,
-    fetchPopularTV,
-    fetchTrendingToday,
-    fetchTrendingThisWeek,
-    fetchRecommendations
-} from '../utils/helpers';
+import { useMoviesAPI } from './useMoviesAPI';
 
 export const useHomepageData = () => {
     const [sections, setSections] = useState({
@@ -20,7 +12,21 @@ export const useHomepageData = () => {
         recommendations: { data: [], loading: true, error: null }
     });
 
+    // Prendiamo le funzioni dall'API
+    const {
+        getTrendingToday,
+        getTrendingThisWeek,
+        getTopRatedMovies,
+        getTopRatedTV,
+        getPopularMovies,
+        getPopularTV,
+        getRecommendations
+    } = useMoviesAPI();
+
+    // Funzione per caricare una singola sezione
     const loadSection = async (sectionName, fetchFunction) => {
+        console.log(`Caricamento sezione: ${sectionName}`); // Debug
+
         setSections(prev => ({
             ...prev,
             [sectionName]: { ...prev[sectionName], loading: true, error: null }
@@ -28,11 +34,14 @@ export const useHomepageData = () => {
 
         try {
             const data = await fetchFunction();
+            console.log(`Dati ricevuti per ${sectionName}:`, data.length); // Debug
+
             setSections(prev => ({
                 ...prev,
-                [sectionName]: { data, loading: false, error: null }
+                [sectionName]: { data: data || [], loading: false, error: null }
             }));
         } catch (error) {
+            console.error(`Errore nel caricamento di ${sectionName}:`, error);
             setSections(prev => ({
                 ...prev,
                 [sectionName]: { data: [], loading: false, error: error.message }
@@ -40,18 +49,25 @@ export const useHomepageData = () => {
         }
     };
 
+    // Carica tutti i dati della homepage
     const loadAllData = async () => {
+        console.log("Caricamento dati homepage iniziato...");
+
+        // Carichiamo tutte le sezioni in parallelo
         await Promise.all([
-            loadSection('trendingToday', fetchTrendingToday),
-            loadSection('trendingThisWeek', fetchTrendingThisWeek),
-            loadSection('topRatedMovies', fetchTopRatedMovies),
-            loadSection('topRatedTV', fetchTopRatedTV),
-            loadSection('popularMovies', fetchPopularMovies),
-            loadSection('popularTV', fetchPopularTV),
-            loadSection('recommendations', fetchRecommendations)
+            loadSection('trendingToday', getTrendingToday),
+            loadSection('trendingThisWeek', getTrendingThisWeek),
+            loadSection('topRatedMovies', getTopRatedMovies),
+            loadSection('topRatedTV', getTopRatedTV),
+            loadSection('popularMovies', getPopularMovies),
+            loadSection('popularTV', getPopularTV),
+            loadSection('recommendations', getRecommendations)
         ]);
+
+        console.log("Caricamento dati homepage completato!");
     };
 
+    // Effetto che carica i dati all'inizio
     useEffect(() => {
         loadAllData();
     }, []);

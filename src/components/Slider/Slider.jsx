@@ -10,6 +10,9 @@ const Slider = ({ title, icon, color, items, loading }) => {
     const [startX, setStartX] = useState(0);
     const [scrollLeft, setScrollLeft] = useState(0);
 
+    // Debug: stampiamo cosa riceviamo
+    console.log(`Slider ${title} - items:`, items?.length, 'loading:', loading);
+
     const checkScrollPosition = () => {
         if (sliderRef.current) {
             const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
@@ -51,6 +54,7 @@ const Slider = ({ title, icon, color, items, loading }) => {
         setIsDragging(false);
     };
 
+    // Stato di caricamento
     if (loading) {
         return (
             <div className="slider-section">
@@ -62,13 +66,15 @@ const Slider = ({ title, icon, color, items, loading }) => {
                 </div>
                 <div className="slider-loading">
                     <div className="loading-spinner-small"></div>
-                    <p>Caricamento...</p>
+                    <p>Caricamento in corso...</p>
                 </div>
             </div>
         );
     }
 
+    // Se non ci sono items o è vuoto
     if (!items || items.length === 0) {
+        console.log(`Nessun item per ${title}`);
         return null;
     }
 
@@ -111,11 +117,21 @@ const Slider = ({ title, icon, color, items, loading }) => {
                 onMouseLeave={handleMouseUp}
             >
                 <div className="slider-track">
-                    {items.map((item) => (
-                        <div key={`${item.media_type}-${item.id}`} className="slider-item">
-                            <Card item={item} />
-                        </div>
-                    ))}
+                    {items.map((item, index) => {
+                        // Debug: stampiamo il primo item per vedere se ha poster_path
+                        if (index === 0) {
+                            console.log(`Primo item di ${title}:`, {
+                                title: item.title || item.name,
+                                poster_path: item.poster_path,
+                                hasImage: !!item.poster_path
+                            });
+                        }
+                        return (
+                            <div key={`${item.media_type || 'item'}-${item.id}-${index}`} className="slider-item">
+                                <Card item={item} />
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         </div>
