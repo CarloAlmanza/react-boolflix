@@ -1,22 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useMoviesAPI } from '../hooks/useMoviesAPI';
 import { getImageUrl, convertVoteToStars, renderStars, getFlagEmoji } from '../utils/helpers';
 import './Detail.css';
 
 const Detail = () => {
-    const { type, id } = useParams(); // type: 'movie' o 'tv', id: ID del contenuto
+    const { type, id } = useParams(); // Prende i parametri dall'URL
     const navigate = useNavigate();
     const { getFullDetails } = useMoviesAPI();
 
     const [details, setDetails] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [activeTab, setActiveTab] = useState('overview'); // overview, cast, trailer
+    const [activeTab, setActiveTab] = useState('overview');
+
+    console.log('Parametri ricevuti:', { type, id }); // Debug
 
     useEffect(() => {
-        loadDetails();
-        // Scroll to top quando si apre la pagina
+        if (type && id) {
+            loadDetails();
+        } else {
+            setError('Parametri mancanti');
+            setLoading(false);
+        }
         window.scrollTo(0, 0);
     }, [type, id]);
 
@@ -25,14 +31,17 @@ const Detail = () => {
         setError(null);
 
         try {
+            console.log('Caricamento dettagli per:', type, id);
             const data = await getFullDetails(parseInt(id), type);
+            console.log('Dati ricevuti:', data);
+
             if (data) {
                 setDetails(data);
             } else {
                 setError('Contenuto non trovato');
             }
         } catch (err) {
-            console.error('Errore nel caricamento dettagli:', err);
+            console.error('Errore nel caricamento:', err);
             setError('Errore nel caricamento dei dettagli');
         } finally {
             setLoading(false);
@@ -40,7 +49,7 @@ const Detail = () => {
     };
 
     const handleBack = () => {
-        navigate(-1); // Torna alla pagina precedente
+        navigate(-1);
     };
 
     if (loading) {
@@ -48,6 +57,7 @@ const Detail = () => {
             <div className="detail-loading">
                 <div className="loading-spinner"></div>
                 <p>Caricamento dettagli...</p>
+                <button onClick={handleBack} className="back-button">Torna indietro</button>
             </div>
         );
     }
@@ -56,6 +66,7 @@ const Detail = () => {
         return (
             <div className="detail-error">
                 <h2>😢 {error || 'Contenuto non trovato'}</h2>
+                <p>ID: {id} - Tipo: {type}</p>
                 <button onClick={handleBack} className="back-button">Torna indietro</button>
             </div>
         );
@@ -63,16 +74,15 @@ const Detail = () => {
 
     // Calcoli per la visualizzazione
     const title = details.title || details.name;
-    const originalTitle = details.original_title || details.original_name;
-    const posterUrl = getImageUrl(details.poster_path, 'w500');
-    const backdropUrl = getImageUrl(details.backdrop_path, 'original');
-    const rating = convertVoteToStars(details.vote_average || 0);
+    const originalTitle = details.originalTitle || details.original_name;
+    const posterUrl = details.posterUrl || getImageUrl(details.poster_path, 'w500');
+    const backdropUrl = details.backdropUrl || getImageUrl(details.backdrop_path, 'original');
+    const rating = convertVoteToStars(details.voteAverage || details.vote_average || 0);
     const { fullStars, emptyStars } = renderStars(rating);
-    const year = (details.release_date || details.first_air_date)?.split('-')[0] || 'Anno sconosciuto';
-    const runtime = details.runtime || details.episode_run_time?.[0] || null;
+    const year = details.year || (details.releaseDate || details.first_air_date)?.split('-')[0] || 'Anno sconosciuto';
+    const runtime = details.runtime || details.episodeRunTime;
     const status = details.status === 'Released' ? 'Uscito' : details.status === 'Returning Series' ? 'In corso' : details.status || 'Sconosciuto';
 
-    // Formatta la durata
     const formatRuntime = (minutes) => {
         if (!minutes) return null;
         const hours = Math.floor(minutes / 60);
@@ -85,7 +95,6 @@ const Detail = () => {
 
     return (
         <div className="detail-page">
-            {/* Hero Section con backdrop */}
             <div
                 className="detail-hero"
                 style={{
@@ -98,7 +107,6 @@ const Detail = () => {
                     </button>
 
                     <div className="detail-info-wrapper">
-                        {/* Poster */}
                         <div className="detail-poster">
                             {posterUrl ? (
                                 <img src={posterUrl} alt={title} />
@@ -109,7 +117,6 @@ const Detail = () => {
                             )}
                         </div>
 
-                        {/* Info principali */}
                         <div className="detail-info">
                             <h1 className="detail-title">{title}</h1>
 
@@ -126,7 +133,7 @@ const Detail = () => {
                                             <span key={`empty-${i}`} className="star empty">☆</span>
                                         ))}
                                     </span>
-                                    <span className="rating-number">({details.vote_average?.toFixed(1) || 'N/A'})</span>
+                                    <span className="rating-number">({details.voteAverage?.toFixed(1) || details.vote_average?.toFixed(1) || 'N/A'})</span>
                                 </span>
                             </div>
 
@@ -135,22 +142,20 @@ const Detail = () => {
                             )}
 
                             <div className="detail-genres">
-                                {details.genres?.map(genre => (
+                                {(details.genres || []).map(genre => (
                                     <span key={genre.id} className="genre-badge">{genre.name}</span>
                                 ))}
                             </div>
 
                             <div className="detail-language">
-                                <strong>Lingua originale:</strong> {getFlagEmoji(details.original_language)} {details.original_language?.toUpperCase()}
+                                <strong>Lingua originale:</strong> {getFlagEmoji(details.originalLanguage || details.original_language)} {(details.originalLanguage || details.original_language)?.toUpperCase()}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Contenuto dettagliato */}
             <div className="detail-content">
-                {/* Tabs */}
                 <div className="detail-tabs">
                     <button
                         className={`tab-btn ${activeTab === 'overview' ? 'active' : ''}`}
@@ -162,7 +167,7 @@ const Detail = () => {
                         className={`tab-btn ${activeTab === 'cast' ? 'active' : ''}`}
                         onClick={() => setActiveTab('cast')}
                     >
-                        🎭 Cast ({details.credits?.length || 0})
+                        🎭 Cast ({details.cast?.length || 0})
                     </button>
                     {details.trailer && (
                         <button
@@ -174,21 +179,21 @@ const Detail = () => {
                     )}
                 </div>
 
-                {/* Contenuto dei tabs */}
                 <div className="tab-content">
                     {activeTab === 'overview' && (
                         <div className="overview-content">
                             <h3>Trama</h3>
                             <p className="detail-overview">{details.overview || 'Descrizione non disponibile'}</p>
 
-                            {/* Info aggiuntive */}
                             <div className="additional-info">
-                                <div className="info-row">
-                                    <span className="info-label">Produzione:</span>
-                                    <span className="info-value">
-                                        {details.production_companies?.map(c => c.name).join(', ') || 'N/A'}
-                                    </span>
-                                </div>
+                                {(details.productionCompanies?.length > 0 || details.production_companies?.length > 0) && (
+                                    <div className="info-row">
+                                        <span className="info-label">Produzione:</span>
+                                        <span className="info-value">
+                                            {(details.productionCompanies || details.production_companies)?.map(c => c.name).join(', ') || 'N/A'}
+                                        </span>
+                                    </div>
+                                )}
                                 {details.budget > 0 && (
                                     <div className="info-row">
                                         <span className="info-label">Budget:</span>
@@ -201,16 +206,16 @@ const Detail = () => {
                                         <span className="info-value">${details.revenue.toLocaleString()}</span>
                                     </div>
                                 )}
-                                {details.number_of_seasons && (
+                                {details.numberOfSeasons && (
                                     <div className="info-row">
                                         <span className="info-label">Stagioni:</span>
-                                        <span className="info-value">{details.number_of_seasons}</span>
+                                        <span className="info-value">{details.numberOfSeasons}</span>
                                     </div>
                                 )}
-                                {details.number_of_episodes && (
+                                {details.numberOfEpisodes && (
                                     <div className="info-row">
                                         <span className="info-label">Episodi:</span>
-                                        <span className="info-value">{details.number_of_episodes}</span>
+                                        <span className="info-value">{details.numberOfEpisodes}</span>
                                     </div>
                                 )}
                             </div>
@@ -221,11 +226,11 @@ const Detail = () => {
                         <div className="cast-content">
                             <h3>Cast Principale</h3>
                             <div className="cast-grid">
-                                {details.credits?.map((actor, index) => (
+                                {(details.cast || []).map((actor, index) => (
                                     <div key={actor.id || index} className="cast-card">
                                         {actor.profile_path ? (
                                             <img
-                                                src={getImageUrl(actor.profile_path, 'w185')}
+                                                src={`https://image.tmdb.org/t/p/w185${actor.profile_path}`}
                                                 alt={actor.name}
                                                 className="cast-photo"
                                             />

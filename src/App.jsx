@@ -10,7 +10,6 @@ import './App.css';
 
 const AppContent = () => {
   const { loadGenres } = useMoviesAPI();
-  const { isSearching } = useAppContext();
 
   useEffect(() => {
     loadGenres();

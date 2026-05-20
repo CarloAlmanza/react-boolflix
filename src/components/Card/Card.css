@@ -135,6 +135,7 @@
     text-decoration: none;
     color: inherit;
     display: block;
+    cursor: pointer;
 }
 
 @media (max-width: 768px) {
