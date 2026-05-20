@@ -133,3 +133,119 @@ export const getGenresString = (genreIds, genresList) => {
         .filter(Boolean);
     return itemGenres.join(', ');
 };
+
+// NUOVE FUNZIONI PER HOMEPAGE
+
+// Fetch film più votati
+export const fetchTopRatedMovies = async () => {
+    try {
+        const response = await fetch(
+            `${BASE_URL}/movie/top_rated?api_key=${API_KEY}&language=it-IT&page=1`
+        );
+        const data = await response.json();
+        return data.results.map(item => ({ ...item, media_type: 'movie' }));
+    } catch (error) {
+        console.error('Error fetching top rated movies:', error);
+        return [];
+    }
+};
+
+// Fetch serie più votate
+export const fetchTopRatedTV = async () => {
+    try {
+        const response = await fetch(
+            `${BASE_URL}/tv/top_rated?api_key=${API_KEY}&language=it-IT&page=1`
+        );
+        const data = await response.json();
+        return data.results.map(item => ({ ...item, media_type: 'tv' }));
+    } catch (error) {
+        console.error('Error fetching top rated TV:', error);
+        return [];
+    }
+};
+
+// Fetch film più popolari
+export const fetchPopularMovies = async () => {
+    try {
+        const response = await fetch(
+            `${BASE_URL}/movie/popular?api_key=${API_KEY}&language=it-IT&page=1`
+        );
+        const data = await response.json();
+        return data.results.map(item => ({ ...item, media_type: 'movie' }));
+    } catch (error) {
+        console.error('Error fetching popular movies:', error);
+        return [];
+    }
+};
+
+// Fetch serie più popolari
+export const fetchPopularTV = async () => {
+    try {
+        const response = await fetch(
+            `${BASE_URL}/tv/popular?api_key=${API_KEY}&language=it-IT&page=1`
+        );
+        const data = await response.json();
+        return data.results.map(item => ({ ...item, media_type: 'tv' }));
+    } catch (error) {
+        console.error('Error fetching popular TV:', error);
+        return [];
+    }
+};
+
+// Fetch trending (oggi)
+export const fetchTrendingToday = async () => {
+    try {
+        const response = await fetch(
+            `${BASE_URL}/trending/all/day?api_key=${API_KEY}&language=it-IT`
+        );
+        const data = await response.json();
+        return data.results.map(item => ({
+            ...item,
+            media_type: item.media_type || (item.title ? 'movie' : 'tv')
+        }));
+    } catch (error) {
+        console.error('Error fetching trending:', error);
+        return [];
+    }
+};
+
+// Fetch trending (questa settimana)
+export const fetchTrendingThisWeek = async () => {
+    try {
+        const response = await fetch(
+            `${BASE_URL}/trending/all/week?api_key=${API_KEY}&language=it-IT`
+        );
+        const data = await response.json();
+        return data.results.map(item => ({
+            ...item,
+            media_type: item.media_type || (item.title ? 'movie' : 'tv')
+        }));
+    } catch (error) {
+        console.error('Error fetching trending week:', error);
+        return [];
+    }
+};
+
+// Fetch raccomandazioni (basate sui film più votati)
+export const fetchRecommendations = async () => {
+    try {
+        // Prendo un film popolare a caso e prendo le sue raccomandazioni
+        const popularResponse = await fetch(
+            `${BASE_URL}/movie/popular?api_key=${API_KEY}&language=it-IT&page=1`
+        );
+        const popularData = await popularResponse.json();
+
+        if (popularData.results.length > 0) {
+            const randomMovie = popularData.results[Math.floor(Math.random() * popularData.results.length)];
+            const recommendationsResponse = await fetch(
+                `${BASE_URL}/movie/${randomMovie.id}/recommendations?api_key=${API_KEY}&language=it-IT`
+            );
+            const recommendationsData = await recommendationsResponse.json();
+            return recommendationsData.results.slice(0, 20).map(item => ({ ...item, media_type: 'movie' }));
+        }
+        return [];
+    } catch (error) {
+        console.error('Error fetching recommendations:', error);
+        return [];
+    }
+};
