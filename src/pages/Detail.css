@@ -1,0 +1,398 @@
+.detail-page {
+    min-height: 100vh;
+    background-color: #141414;
+    color: white;
+}
+
+/* Hero Section */
+.detail-hero {
+    position: relative;
+    min-height: 70vh;
+    background-size: cover;
+    background-position: center top;
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: 3rem;
+}
+
+.back-button-hero {
+    position: absolute;
+    top: 100px;
+    left: 2rem;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.back-button-hero:hover {
+    background: #e50914;
+    transform: translateX(-5px);
+}
+
+.detail-hero-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+}
+
+.detail-info-wrapper {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-end;
+}
+
+/* Poster */
+.detail-poster {
+    flex-shrink: 0;
+    width: 250px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.detail-poster img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.poster-placeholder {
+    width: 250px;
+    height: 375px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+}
+
+/* Info */
+.detail-info {
+    flex: 1;
+    padding-bottom: 1rem;
+}
+
+.detail-title {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.detail-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+.meta-year,
+.meta-runtime,
+.meta-status {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.meta-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.rating-number {
+    color: #ffd700;
+}
+
+.detail-tagline {
+    font-size: 1.1rem;
+    font-style: italic;
+    color: #e50914;
+    margin-bottom: 1rem;
+}
+
+.detail-genres {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.genre-badge {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    transition: background 0.3s ease;
+}
+
+.genre-badge:hover {
+    background: #e50914;
+}
+
+.detail-language {
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+/* Contenuto dettagliato */
+.detail-content {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+/* Tabs */
+.detail-tabs {
+    display: flex;
+    gap: 0.5rem;
+    border-bottom: 1px solid #333;
+    margin-bottom: 2rem;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    color: #999;
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.tab-btn:hover {
+    color: white;
+}
+
+.tab-btn.active {
+    color: #e50914;
+}
+
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: #e50914;
+}
+
+/* Overview */
+.overview-content h3,
+.cast-content h3,
+.trailer-content h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.detail-overview {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #ccc;
+    margin-bottom: 2rem;
+}
+
+.additional-info {
+    background: #1a1a1a;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.info-row {
+    display: flex;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #333;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    width: 120px;
+    font-weight: 600;
+    color: #e50914;
+}
+
+.info-value {
+    flex: 1;
+    color: #ccc;
+}
+
+/* Cast Grid */
+.cast-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1.5rem;
+}
+
+.cast-card {
+    background: #1a1a1a;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.cast-card:hover {
+    transform: translateY(-5px);
+}
+
+.cast-photo {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.cast-photo-placeholder {
+    width: 100%;
+    height: 150px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+}
+
+.cast-info {
+    padding: 0.8rem;
+}
+
+.cast-name {
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    font-size: 0.9rem;
+}
+
+.cast-character {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+/* Trailer */
+.trailer-wrapper {
+    position: relative;
+    padding-bottom: 56.25%;
+    /* 16:9 */
+    height: 0;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.trailer-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Loading & Error */
+.detail-loading,
+.detail-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #141414;
+    color: white;
+    text-align: center;
+}
+
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid #333;
+    border-top-color: #e50914;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.back-button {
+    background: #e50914;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: background 0.3s ease;
+}
+
+.back-button:hover {
+    background: #f6121d;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .detail-info-wrapper {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .detail-poster {
+        width: 200px;
+    }
+
+    .poster-placeholder {
+        width: 200px;
+        height: 300px;
+    }
+
+    .detail-title {
+        font-size: 2rem;
+    }
+
+    .detail-meta {
+        justify-content: center;
+    }
+
+    .detail-genres {
+        justify-content: center;
+    }
+
+    .back-button-hero {
+        top: 80px;
+        left: 1rem;
+    }
+
+    .detail-content {
+        padding: 0 1rem;
+    }
+
+    .cast-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 1rem;
+    }
+
+    .info-row {
+        flex-direction: column;
+    }
+
+    .info-label {
+        margin-bottom: 0.3rem;
+    }
+}

@@ -131,6 +131,12 @@
     border-radius: 2px;
 }
 
+.card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
 @media (max-width: 768px) {
     .card {
         width: 180px;

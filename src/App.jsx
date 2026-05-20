@@ -1,12 +1,16 @@
 import React, { useEffect } from 'react';
-import { AppProvider } from './context/AppContext';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AppProvider, useAppContext } from './context/AppContext';
 import Header from './components/Header/Header';
-import Main from './components/Main/Main';
+import Home from './pages/Home';
+import SearchResults from './pages/SearchResults';
+import Detail from './pages/Detail';
 import { useMoviesAPI } from './hooks/useMoviesAPI';
 import './App.css';
 
 const AppContent = () => {
   const { loadGenres } = useMoviesAPI();
+  const { isSearching } = useAppContext();
 
   useEffect(() => {
     loadGenres();
@@ -15,16 +19,22 @@ const AppContent = () => {
   return (
     <div className="app">
       <Header />
-      <Main />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/search" element={<SearchResults />} />
+        <Route path="/detail/:type/:id" element={<Detail />} />
+      </Routes>
     </div>
   );
 };
 
 function App() {
   return (
-    <AppProvider>
-      <AppContent />
-    </AppProvider>
+    <Router>
+      <AppProvider>
+        <AppContent />
+      </AppProvider>
+    </Router>
   );
 }
 

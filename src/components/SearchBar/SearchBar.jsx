@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../context/AppContext';
 import { useMoviesAPI } from '../../hooks/useMoviesAPI';
 import './SearchBar.css';
@@ -14,6 +15,9 @@ const SearchBar = () => {
     const inputRef = useRef(null);
     const suggestionsRef = useRef(null);
 
+    // Hooks di navigazione
+    const navigate = useNavigate();
+
     // Context
     const {
         setMovies,
@@ -25,7 +29,8 @@ const SearchBar = () => {
         setErrorMsg,
         resetSearch,
         activeTab,
-        setActiveTab
+        setActiveTab,
+        isSearching
     } = useAppContext();
 
     // Hooks personalizzati
@@ -75,11 +80,6 @@ const SearchBar = () => {
             return;
         }
 
-        // Se è uguale alla ricerca corrente, non rifare la chiamata
-        if (searchQuery === inputValue && !isTyping) {
-            // Forza comunque un refresh se vuoi
-        }
-
         // Attiva stati di caricamento
         setIsLoading(true);
         setIsSearching(true);
@@ -95,6 +95,9 @@ const SearchBar = () => {
             // Aggiorna i risultati nel Context
             setMovies(movies);
             setSeries(series);
+
+            // Naviga alla pagina dei risultati
+            navigate('/search');
 
             // Se non ci sono risultati, mostra un messaggio
             if (movies.length === 0 && series.length === 0) {
@@ -123,9 +126,10 @@ const SearchBar = () => {
 
     // Gestisce il click su un suggerimento
     const handleSuggestionClick = (suggestion) => {
-        setInputValue(suggestion.title || suggestion.name);
+        const suggestionTitle = suggestion.title || suggestion.name;
+        setInputValue(suggestionTitle);
         setShowSuggestions(false);
-        handleSearch(suggestion.title || suggestion.name);
+        handleSearch(suggestionTitle);
     };
 
     // Gestisce il reset della ricerca
@@ -135,6 +139,7 @@ const SearchBar = () => {
         setSuggestions([]);
         setShowSuggestions(false);
         setIsTyping(false);
+        navigate('/'); // Torna alla homepage
     };
 
     // Gestisce il focus sull'input
@@ -142,6 +147,14 @@ const SearchBar = () => {
         if (inputValue.trim().length >= 2 && suggestions.length > 0) {
             setShowSuggestions(true);
         }
+    };
+
+    // Gestisce il clear dell'input
+    const handleClearInput = () => {
+        setInputValue('');
+        setSuggestions([]);
+        setShowSuggestions(false);
+        inputRef.current?.focus();
     };
 
     return (
@@ -164,9 +177,9 @@ const SearchBar = () => {
                         onFocus={handleFocus}
                     />
 
-                    {/* Bottone reset (X) - appare solo se c'è testo */}
+                    {/* Bottone clear (X) - appare solo se c'è testo */}
                     {inputValue && (
-                        <button className="search-clear" onClick={handleReset}>
+                        <button className="search-clear" onClick={handleClearInput} aria-label="Cancella testo">
                             ✕
                         </button>
                     )}
@@ -186,12 +199,16 @@ const SearchBar = () => {
                                 className="suggestion-item"
                                 onClick={() => handleSuggestionClick(suggestion)}
                             >
-                                {suggestion.poster_path && (
+                                {suggestion.poster_path ? (
                                     <img
                                         src={`https://image.tmdb.org/t/p/w92${suggestion.poster_path}`}
                                         alt={suggestion.title || suggestion.name}
                                         className="suggestion-poster"
                                     />
+                                ) : (
+                                    <div className="suggestion-poster-placeholder">
+                                        {suggestion.media_type === 'movie' ? '🎬' : '📺'}
+                                    </div>
                                 )}
                                 <div className="suggestion-info">
                                     <div className="suggestion-title">
@@ -204,7 +221,7 @@ const SearchBar = () => {
                                     </div>
                                 </div>
                                 <div className="suggestion-type">
-                                    {suggestion.title ? '🎬 Film' : '📺 Serie'}
+                                    {suggestion.display_type || (suggestion.title ? '🎬 Film' : '📺 Serie')}
                                 </div>
                             </div>
                         ))}
@@ -213,13 +230,13 @@ const SearchBar = () => {
             </div>
 
             {/* Tabs per filtrare i risultati (visibili solo durante la ricerca) */}
-            {useAppContext().isSearching && (
+            {isSearching && (
                 <div className="search-tabs">
                     <button
                         className={`search-tab ${activeTab === 'all' ? 'active' : ''}`}
                         onClick={() => handleTabChange('all')}
                     >
-                        Tutti
+                        📋 Tutti
                     </button>
                     <button
                         className={`search-tab ${activeTab === 'movies' ? 'active' : ''}`}

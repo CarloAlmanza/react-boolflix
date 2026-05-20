@@ -21,6 +21,7 @@
     font-size: 1rem;
     color: #999;
     pointer-events: none;
+    z-index: 1;
 }
 
 .search-input {
@@ -52,9 +53,10 @@
     border: none;
     color: #999;
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 1.1rem;
     padding: 0.2rem 0.5rem;
     transition: color 0.3s ease;
+    z-index: 1;
 }
 
 .search-clear:hover {
@@ -118,6 +120,17 @@
     border-radius: 4px;
 }
 
+.suggestion-poster-placeholder {
+    width: 40px;
+    height: 60px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
 .suggestion-info {
     flex: 1;
 }
@@ -126,20 +139,22 @@
     color: white;
     font-weight: 500;
     margin-bottom: 0.2rem;
+    font-size: 0.9rem;
 }
 
 .suggestion-year {
     color: #999;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
 }
 
 .suggestion-type {
     color: #e50914;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 600;
     padding: 0.2rem 0.5rem;
     background-color: rgba(229, 9, 20, 0.1);
     border-radius: 4px;
+    white-space: nowrap;
 }
 
 /* Tabs di filtro */
@@ -188,14 +203,50 @@
     background: #e50914;
 }
 
+/* Messaggio di errore (opzionale) */
+.search-error {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 0.5rem;
+    background-color: #e50914;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* Responsive */
 @media (max-width: 768px) {
+    .search-bar-container {
+        width: 100%;
+    }
+
+    .search-input-wrapper {
+        width: 100%;
+    }
+
     .search-input {
-        width: 220px;
+        width: 100%;
+        min-width: 180px;
     }
 
     .search-input:focus {
-        width: 250px;
+        width: 100%;
     }
 
     .search-clear {
@@ -204,10 +255,39 @@
 
     .search-button {
         padding: 0.7rem 1rem;
+        white-space: nowrap;
     }
 
     .search-suggestions {
         width: 100%;
         left: 0;
+        right: auto;
+    }
+
+    .search-tabs {
+        justify-content: center;
+    }
+
+    .suggestion-item {
+        padding: 0.6rem;
+    }
+
+    .suggestion-title {
+        font-size: 0.85rem;
+    }
+
+    .suggestion-type {
+        font-size: 0.7rem;
+    }
+}
+
+/* Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .search-input {
+        width: 280px;
+    }
+
+    .search-input:focus {
+        width: 320px;
     }
 }
